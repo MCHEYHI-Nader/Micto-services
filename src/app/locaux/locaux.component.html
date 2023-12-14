@@ -1,0 +1,252 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestion des Locaux</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 10px;
+    }
+    main {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    #loc-list {
+      width: 60%;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .add-local-section {
+      width: 60%;
+      margin-bottom: 20px;
+    }
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+    }
+    .form-container form {
+      width: 100%;
+    }
+    .form-container select,
+    .form-container input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+    #map {
+      height: 300px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    #enregistrer-btn {
+      align-self: flex-end;
+      padding: 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #supprimer-btn{
+      align-self: flex-end;
+      padding: 10px;
+      background-color: #af4c4c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Les Locaux Publics</h1>
+  </header>
+
+  <main>
+    <!-- Tableau des locaux enregistrés -->
+    <div id="loc-list">
+      <h2>Mes Locaux</h2>
+      <table *ngIf="listLocaux" class="table">
+        <thead>
+          <tr>
+            <th>Identifiant</th>
+            <th>Désignation</th>
+            <th>Code</th>
+            <th>Type</th>
+            <th>Nature d'exercice</th>
+            <th>Région</th>
+            <th>Altitude</th>
+            <th>Longitude</th>
+            <th>District</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Exemple de ligne, remplacez-le par les données réelles de vos locaux -->
+          <tr *ngFor="let f of listLocaux">
+            <td>{{ f.id }}</td>
+            <td>{{ f.designation }}</td>
+            <td>{{ f.code }}</td>
+            <td>{{ f.type }}</td>
+            <td>{{ f.natureExercice }}</td>
+            <td>{{ f.region }}</td>
+            <td>{{ f.altitude }}</td>
+            <td>{{ f.longitude }}</td>
+            <td>{{ f.district }}</td>
+            <td class="action-buttons">
+              <button (click)="editEntity(f)" id="enregistrer-btn">Modifier</button>
+              <button (click)="deleteEntity(f.id)" id="supprimer-btn">Supprimer</button>
+            </td>
+            </tr>
+          <!-- Ajoutez d'autres lignes pour chaque local enregistré -->
+        </tbody>
+      </table>
+    </div>
+    <!-- locaux.component.html -->
+    <div class="add-local-section">
+      <h2>Ajouter un local</h2>
+      <div class="form-container">
+        <form #myForm="ngForm" (ngSubmit)="createEntity()">
+          <label for="code">Code :</label>
+          <input
+            type="text"
+            id="code"
+            name="code"
+            [(ngModel)]="formData.code"
+            required
+          />
+
+          <label for="designation">Désignation :</label>
+          <input
+            type="text"
+            id="designation"
+            name="designation"
+            [(ngModel)]="formData.designation"
+            required
+          />
+
+          <label for="Type">Type :</label>
+          <input
+            type="text"
+            id="Type"
+            name="Type"
+            [(ngModel)]="formData.type"
+            required
+          />
+
+          <label for="nature">Nature d'exercice :</label>
+          <select
+            id="nature"
+            name="nature"
+            [(ngModel)]="formData.natureExercice"
+            required
+          >
+            <option value="public">Public</option>
+            <option value="commercial">Commercial</option>
+            <option value="industriel">Industriel</option>
+            <option value="residentiel">Résidentiel</option>
+            <!-- Options pour la nature d'exercice -->
+          </select>
+
+          <label for="region">Région :</label>
+          <select
+            id="region"
+            name="region"
+            [(ngModel)]="formData.region"
+            required
+          >
+            <option value="Ariana">Ariana</option>
+            <option value="Béja">Béja</option>
+            <option value="Ben Arous">Ben Arous</option>
+            <option value="Bizerte">Bizerte</option>
+            <option value="Gabès">Gabès</option>
+            <option value="Gafsa">Gafsa</option>
+            <option value="Jendouba">Jendouba</option>
+            <option value="Kairouan">Kairouan</option>
+            <option value="Kasserine">Kasserine</option>
+            <option value="Kébili">Kébili</option>
+            <option value="Kef">Le Kef</option>
+            <option value="Mahdia">Mahdia</option>
+            <option value="Manouba">Manouba</option>
+            <option value="Médenine">Médenine</option>
+            <option value="Monastir">Monastir</option>
+            <option value="Nabeul">Nabeul</option>
+            <option value="Sfax">Sfax</option>
+            <option value="Sidi Bouzid">Sidi Bouzid</option>
+            <option value="Siliana">Siliana</option>
+            <option value="Sousse">Sousse</option>
+            <option value="Tataouine">Tataouine</option>
+            <option value="Tozeur">Tozeur</option>
+            <option value="Tunis">Tunis</option>
+            <option value="Zaghouan">Zaghouan</option>
+            <!-- Options pour la région -->
+          </select>
+
+          <label for="District">District :</label>
+          <input
+            type="text"
+            id="District"
+            name="District"
+            [(ngModel)]="formData.district"
+            required
+          />
+
+          <label for="altitude">Altitude :</label>
+          <input
+            type="text"
+            id="altitude"
+            name="altitude"
+            [(ngModel)]="formData.altitude"
+            required
+          />
+
+          <label for="longitude">Longitude :</label>
+          <input
+            type="text"
+            id="longitude"
+            name="longitude"
+            [(ngModel)]="formData.longitude"
+            required
+          />
+
+          <!-- Map -->
+          <h2>Localisation sur la carte</h2>
+          <div id="map"></div>
+          
+
+          <!-- Bouton Enregistrer -->
+          <button type="submit" id="enregistrer-btn">Enregistrer</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script></script>
+</body>
